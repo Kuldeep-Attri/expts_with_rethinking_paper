@@ -94,15 +94,15 @@ for m in model.modules():
             continue
         weight_copy = m.weight.data.abs().clone()
         weight_copy = weight_copy.cpu().numpy()
-        L1_norm = np.sum(weight_copy, axis=(1, 2, 3))
-        arg_max = np.argsort(L1_norm)
+        L1_norm = np.sum(weight_copy, axis=(1, 2, 3)) # here we getting sum of each filter
+        arg_max = np.argsort(L1_norm) # Sorting on the basis of its value
         arg_max_rev = arg_max[::-1][:cfg[layer_id]]
         assert arg_max_rev.size == cfg[layer_id], "size of arg_max_rev not correct"
         mask = torch.zeros(out_channels)
         mask[arg_max_rev.tolist()] = 1
         cfg_mask.append(mask)
         layer_id += 1
-    elif isinstance(m, nn.MaxPool2d):
+    elif isinstance(m, nn.MaxPool2d): # is it is a MaxPool layer, just update the layer_id 
         layer_id += 1
 
 
